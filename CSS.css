@@ -1,0 +1,123 @@
+body {
+    font-family: Arial;
+    background-color: lightyellow;
+  }
+  
+  main {
+    text-align: center;
+  }
+
+  nav {
+    background-color: coral;
+    padding: 20px;
+  }
+  
+  nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 5px;
+    gap: 65px;
+  }
+  
+  nav ul li a {
+    color: white;
+    font-weight: bold;
+  }
+  
+  nav ul li a:hover {
+    color: grey;
+  }
+  
+  
+  h1 {
+    margin-bottom: 20px;
+    font-size: 31px;
+    text-align: center;
+  }
+  
+  
+  
+  .audio-container {
+    background-color: lightgreen;
+    color: white;
+    padding: 20px;
+    width: 38%;
+    margin: auto;
+    border-radius: 10px;
+    border: solid black;
+  }
+  
+  .audio-container ul {
+    text-align: left;
+    max-width: 500px;
+  }
+  
+  .audio-container button {
+    margin: 15px;
+    padding: 12px;
+    border: solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+  }
+  
+  .audio-container button:hover {
+    background-color: grey;
+    color: white;
+  }
+
+  #quote-container {
+    background-color: white;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 30px;
+    width: 45%;
+    border: solid black;
+    border-radius: 10px;
+   
+  }
+
+  
+  .chart-container {
+    margin: auto;
+    padding: 10px;
+    max-width: 600px;
+    height: 300px;
+  }
+  
+  .stock-container {
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: white;
+    width: 70%;
+  }
+  
+  .stock-container th, .stock-container td {
+    padding: 10px;
+    text-align: center;
+    border:  2px solid black;
+    border-radius: 8px;
+  }
+  
+  
+
+  canvas#stocksChart {
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 12px;
+    width: 100%;
+    height: 300px;
+    max-width: 950px;
+    margin: auto;
+  }
+    
+  
+  .dog-img {
+    width: 300px;
+    height: auto;
+  }

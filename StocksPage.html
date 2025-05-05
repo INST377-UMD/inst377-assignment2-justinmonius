@@ -1,0 +1,163 @@
+<html>
+<head>
+  <title>Stocks</title>
+  <link rel="stylesheet" href="CSS.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+  <h1>Stocks</h1>
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="HomePage.html">Home</a></li>
+      <li><a href="StocksPage.html">Stocks</a></li>
+      <li><a href="DogsPage.html">Dogs</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h2>Lets lookup some stocks!</h2>
+    <input type="text" id="ticker" />
+    <select id="days">
+      <option value="30">30 Days</option>
+      <option value="60">60 Days</option>
+      <option value="90">90 Days</option>
+    </select>
+    <button class="button-3" onclick="loadData()">Lookup!</button>
+
+    <div class="chart-container">
+      <canvas id="stocksChart"></canvas>
+    </div>
+
+    <section>
+      <h2>Top 5 Stocks</h2>
+      <table class="stock-container">
+        <thead>
+          <tr>
+            <th>Ticker</th>
+            <th>Comments</th>
+            <th>Sentiment</th>
+          </tr>
+        </thead>
+        <tbody id="top-stocks"></tbody>
+      </table>
+    </section>
+
+    <div class="audio-container">
+        <h3>In this web page there are options to Navigate using Audio!</h3>
+        <ul>
+          <li>Navigate to a Different Page > Say: "Navigate to &lt;page&gt;"</li>
+          <li>Change the Page Color > Say: "Change the color to &lt;color&gt;"</li>
+          <li>Say Hello Back to You > Say: "Hello"</li>
+          <li>"Lookup &lt;ticker&gt;"</li>
+        </ul>
+        <button onclick="startListening()">Turn On Listening</button>
+        <button onclick="stopListening()">Turn Off Listening</button>
+    </div>
+  </main>
+
+  
+
+    
+
+  <script>
+    let stockChart;
+
+    async function loadData(tickerInput = null) {
+      const ticker = tickerInput || document.getElementById("ticker").value;
+      const days = parseInt(document.getElementById("days").value);
+
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - days);
+
+      const formattedDate = d => d.toISOString().split("T")[0];
+
+      const url = `https://api.polygon.io/v2/aggs/ticker/${ticker.toUpperCase()}/range/1/day/${formattedDate(startDate)}/${formattedDate(endDate)}?adjusted=true&sort=asc&limit=120&apiKey=CedCIZKTHEMu73a22c9REGn1_XdbdxVg`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.results || data.results.length === 0) {
+          alert("Not a valid ticker");
+          return;
+        }
+
+        const labels = data.results.map(d => new Date(d.t).toLocaleDateString());
+        const prices = data.results.map(d => d.c);
+
+        if (stockChart) stockChart.destroy();
+
+        const newChart = document.getElementById("stocksChart");
+
+        stockChart = new Chart(newChart, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: `${ticker.toUpperCase()} Closing Prices`,
+              data: prices,
+              borderWidth: 2,
+              fill: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+              y: {
+                beginAtZero: false
+              }
+            }
+          }
+        });
+      } catch (error) {
+        alert("Error loading data");
+        console.error(error);
+      }
+    }
+
+    async function loadTopStocks() {
+      const res = await fetch("https://tradestie.com/api/v1/apps/reddit?date=2022-04-03");
+      const data = await res.json();
+      const top5 = data.slice(0, 5);
+
+      const tbody = document.getElementById("top-stocks");
+      tbody.innerHTML = "";
+      top5.forEach(stock => {
+        const row = `<tr>
+          <td><a href="https://finance.yahoo.com/quote/${stock.ticker}" target="_blank">${stock.ticker}</a></td>
+          <td>${stock.no_of_comments}</td>
+          <td>${stock.sentiment === 'Bullish' ? '📈🐂' : '📉🐻'}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function startListening() {
+      if (annyang) {
+        const commands = {
+          'hello': () => alert('Hello World'),
+          'change the color to *color': (color) => document.body.style.backgroundColor = color,
+          'navigate to *page': (page) => {
+            const target = page.toLowerCase();
+            if (target.includes('home')) location.href = 'HomePage.html';
+            else if (target.includes('stocks')) location.href = 'StocksPage.html';
+            else if (target.includes('dogs')) location.href = 'DogsPage.html';
+          },
+          'lookup *ticker': (ticker) => loadData(ticker)
+        };
+        annyang.addCommands(commands);
+        annyang.start();
+      }
+    }
+
+    function stopListening() {
+      if (annyang) annyang.abort();
+    }
+
+    window.onload = loadTopStocks;
+  </script>
+</body>
+</html>
