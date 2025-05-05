@@ -1,0 +1,122 @@
+
+<html>
+<head>
+  <title>Home</title>
+  <link rel="stylesheet" href="CSS.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+  <style>
+    .button-3 {
+      appearance: none;
+      background-color: #2ea44f;
+      border: 1px solid rgba(27, 31, 35, .15);
+      border-radius: 6px;
+      box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+      box-sizing: border-box;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      padding: 6px 16px;
+      position: relative;
+      text-align: center;
+      text-decoration: none;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .button-3:focus:not(:focus-visible):not(.focus-visible) {
+      box-shadow: none;
+      outline: none;
+    }
+    .button-3:hover {
+      background-color: #2c974b;
+    }
+    .button-3:focus {
+      box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+      outline: none;
+    }
+    .button-3:disabled {
+      background-color: #94d3a2;
+      border-color: rgba(27, 31, 35, .1);
+      color: rgba(255, 255, 255, .8);
+      cursor: default;
+    }
+    .button-3:active {
+      background-color: #298e46;
+      box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+    }
+  </style>
+  <h1>Home</h1>
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="HomePage.html">Home</a></li>
+      <li><a href="StocksPage.html">Stocks</a></li>
+      <li><a href="DogsPage.html">Dogs</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1>These are some different activities we can try!</h1>
+    <button class="button-3" onclick="location.href='StocksPage.html'" role="button">Stocks</button>
+    <button class="button-3" onclick="location.href='DogsPage.html'" role="button">Dogs</button>
+
+    <section id="quote-container">
+      <h2>Quote of the Page Load</h2>
+      <blockquote id="quote"></blockquote>
+    </section>
+
+    <div class="audio-container">
+      <h3>In this web page there are options to Navigate using Audio!</h3>
+      <ul>
+        <li>Navigate to a Different Page > Say: "Navigate to &lt;page&gt;"</li>
+        <li>Change the Page Color > Say: "Change the color to &lt;color&gt;"</li>
+        <li>Say Hello Back to You > Say: "Hello"</li>
+
+      </ul>
+      <button onclick="startListening()">Turn On Listening</button>
+      <button onclick="stopListening()">Turn Off Listening</button>
+    </div>
+  </main>
+
+  <script>
+       fetch("https://zenquotes.io/api/random")
+      .then(res => res.json())
+      .then(data => {
+        const quoteObj = data[0];
+        document.getElementById("quote").innerText = `${quoteObj.q} — ${quoteObj.a}`;
+      })
+      .catch(() => {
+        document.getElementById("quote").innerText = "Quote unavailable";
+      });
+
+   
+    function startListening() {
+      if (annyang) {
+        const commands = {
+          'hello': () => alert('Hello World'),
+          'change the color to *color': (color) => document.body.style.backgroundColor = color,
+          'navigate to *page': (page) => {
+            const target = page.toLowerCase();
+            if (target.includes('home')) location.href = 'HomePage.html';
+            else if (target.includes('stocks')) location.href = 'StocksPage.html';
+            else if (target.includes('dogs')) location.href = 'DogsPage.html';
+          }
+        };
+        annyang.addCommands(commands);
+        annyang.start();
+      }
+    }
+
+    function stopListening() {
+      if (annyang) annyang.abort();
+    }
+  </script>
+</body>
+</html>
